@@ -1,26 +1,249 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --bg: #fafafa;
+  --pane: #ffffff;
+  --pane-soft: #f5f5f7;
+  --text: #1d1d1f;
+  --text-soft: #6e6e73;
+  --text-faint: #98989d;
+  --border: #e5e5e7;
+  --border-strong: #d2d2d7;
+  --accent: #007aff;
+  --accent-soft: rgba(0, 122, 255, 0.1);
+  --accent-hover: rgba(0, 122, 255, 0.06);
+  --row-hover: rgba(0, 0, 0, 0.04);
+  --danger: #ff3b30;
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.04);
+  --shadow-md: 0 8px 24px -12px rgba(0, 0, 0, 0.12);
+
+  --background: var(--bg);
+  --foreground: var(--text);
 }
 
 @theme inline {
+  --color-bg: var(--bg);
+  --color-pane: var(--pane);
+  --color-pane-soft: var(--pane-soft);
+  --color-text: var(--text);
+  --color-text-soft: var(--text-soft);
+  --color-text-faint: var(--text-faint);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-accent: var(--accent);
+  --color-accent-soft: var(--accent-soft);
+  --color-danger: var(--danger);
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-body);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+html,
+body {
+  height: 100%;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--font-body), -apple-system, BlinkMacSystemFont, "SF Pro Text",
+    "Inter", system-ui, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+input.bare,
+textarea.bare {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: inherit;
+  font: inherit;
+  width: 100%;
+  resize: none;
+}
+input.bare::placeholder,
+textarea.bare::placeholder {
+  color: var(--text-faint);
+}
+
+/* Things-3 style circle checkbox */
+.objective-check {
+  appearance: none;
+  width: 18px;
+  height: 18px;
+  border: 1.5px solid var(--border-strong);
+  border-radius: 9999px;
+  background: var(--pane);
+  display: inline-grid;
+  place-items: center;
+  cursor: pointer;
+  transition:
+    border-color 120ms ease,
+    background 120ms ease;
+  flex-shrink: 0;
+}
+.objective-check:hover {
+  border-color: var(--accent);
+}
+.objective-check:checked {
+  background: var(--accent);
+  border-color: var(--accent);
+}
+.objective-check:checked::after {
+  content: "";
+  width: 9px;
+  height: 4px;
+  border-left: 1.75px solid #ffffff;
+  border-bottom: 1.75px solid #ffffff;
+  transform: rotate(-45deg) translate(0.5px, -1px);
+}
+
+/* List rows */
+.tree-row {
+  cursor: pointer;
+  border-radius: 6px;
+  transition: background 100ms ease;
+}
+.tree-row:hover {
+  background: var(--row-hover);
+}
+.tree-row.selected {
+  background: var(--accent-soft);
+}
+
+/* Tabs */
+.tab {
+  font-size: 13px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+  color: var(--text-soft);
+  padding: 6px 14px;
+  border-radius: 9999px;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  transition:
+    color 120ms ease,
+    background 120ms ease;
+}
+.tab:hover {
+  color: var(--text);
+  background: var(--row-hover);
+}
+.tab.active {
+  color: var(--accent);
+  background: var(--accent-soft);
+}
+
+/* Quiet utility button (used for + / Mark complete / Delete) */
+.btn-quiet {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--text-soft);
+  background: transparent;
+  border: 1px solid var(--border);
+  padding: 5px 11px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 120ms ease;
+}
+.btn-quiet:hover {
+  color: var(--text);
+  border-color: var(--border-strong);
+  background: var(--pane);
+}
+.btn-quiet.primary {
+  color: var(--accent);
+  border-color: transparent;
+  background: var(--accent-soft);
+}
+.btn-quiet.primary:hover {
+  background: rgba(0, 122, 255, 0.16);
+}
+.btn-quiet.danger:hover {
+  color: var(--danger);
+  border-color: var(--danger);
+  background: rgba(255, 59, 48, 0.06);
+}
+
+.scroll-thin::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+.scroll-thin::-webkit-scrollbar-thumb {
+  background: var(--border-strong);
+  border-radius: 4px;
+}
+.scroll-thin::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.struck {
+  text-decoration: line-through;
+  text-decoration-color: var(--text-faint);
+  color: var(--text-faint);
+}
+
+/* A step that has been promoted into a sub-quest. The checkbox is
+   replaced with a non-interactive marker — completion is auto-managed. */
+.objective-check.linked {
+  cursor: default;
+  border-style: dashed;
+  border-color: var(--border-strong);
+  background: transparent;
+  position: relative;
+}
+.objective-check.linked::after {
+  content: "";
+  position: absolute;
+  inset: 4px;
+  border-radius: 9999px;
+  background: var(--accent-soft);
+}
+.objective-check.linked.linked-done {
+  border-style: solid;
+  border-color: var(--accent);
+  background: var(--accent);
+}
+.objective-check.linked.linked-done::after {
+  inset: 0;
+  background: transparent;
+  width: 9px;
+  height: 4px;
+  border-left: 1.75px solid #ffffff;
+  border-bottom: 1.75px solid #ffffff;
+  transform: rotate(-45deg) translate(0.5px, -1px);
+  border-radius: 0;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  margin: -3px 0 0 -5px;
+}
+
+/* Quest log entries — colored left rule by entry kind */
+.quest-log-entry {
+  border-color: var(--border-strong);
+}
+.quest-log-started {
+  border-color: var(--text-faint);
+}
+.quest-log-expanded {
+  border-color: var(--accent);
+}
+.quest-log-promoted {
+  border-color: #af52de; /* purple — branching */
+}
+.quest-log-resolved {
+  border-color: #34c759; /* green */
+}
+.quest-log-reopened {
+  border-color: #ff9500; /* amber */
+}
+.quest-log-note {
+  border-color: var(--border-strong);
 }
